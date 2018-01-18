@@ -270,13 +270,13 @@ describe('@feathersjs/express/rest provider', () => {
         req.headers['content-type'] = req.headers['content-type'] || 'application/json';
         next();
       })
-      .configure(rest(rest.formatter))
-      .use(bodyParser.json())
-      .use('/todo', {
-        create (data) {
-          return Promise.resolve(data);
-        }
-      });
+        .configure(rest(rest.formatter))
+        .use(bodyParser.json())
+        .use('/todo', {
+          create (data) {
+            return Promise.resolve(data);
+          }
+        });
 
       const server = app.listen(4775);
       const options = {
