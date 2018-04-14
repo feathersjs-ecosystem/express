@@ -3,11 +3,11 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 
 const feathers = require('@feathersjs/feathers');
-const { Service } = require('@feathersjs/commons/lib/test/fixture');
+const {Service} = require('@feathersjs/commons/lib/test/fixture');
 
 const expressify = require('../../lib');
 const testCrud = require('./crud');
-const { rest } = expressify;
+const {rest} = expressify;
 
 describe('@feathersjs/express/rest provider', () => {
   describe('base functionality', () => {
@@ -47,7 +47,7 @@ describe('@feathersjs/express/rest provider', () => {
 
       app.configure(rest(formatter))
         .use('/todo', {
-          get (id) {
+          get(id) {
             return Promise.resolve({
               description: `You have to do ${id}`
             });
@@ -65,11 +65,11 @@ describe('@feathersjs/express/rest provider', () => {
 
     it('lets you set no handler', () => {
       const app = expressify(feathers());
-      const data = { fromHandler: true };
+      const data = {fromHandler: true};
 
       app.configure(rest(null))
         .use('/todo', {
-          get (id) {
+          get(id) {
             return Promise.resolve({
               description: `You have to do ${id}`
             });
@@ -93,11 +93,11 @@ describe('@feathersjs/express/rest provider', () => {
         .configure(rest(rest.formatter))
         .use(bodyParser.json())
         .use('codes', {
-          get (id, params) {
-            return Promise.resolve({ id });
+          get(id, params) {
+            return Promise.resolve({id});
           },
 
-          create (data) {
+          create(data) {
             return Promise.resolve(data);
           }
         })
@@ -123,7 +123,7 @@ describe('@feathersjs/express/rest provider', () => {
 
       it('sets the actual hook object in res.hook', () => {
         app.use('/hook', {
-          get (id) {
+          get(id) {
             return Promise.resolve({
               description: `You have to do ${id}`
             });
@@ -135,7 +135,7 @@ describe('@feathersjs/express/rest provider', () => {
         });
 
         app.service('hook').hooks({
-          after (hook) {
+          after(hook) {
             hook.addedProperty = true;
           }
         });
@@ -146,13 +146,13 @@ describe('@feathersjs/express/rest provider', () => {
               id: 'dishes',
               params: {
                 route: {},
-                query: { test: 'param' },
+                query: {test: 'param'},
                 provider: 'rest'
               },
               type: 'after',
               method: 'get',
               path: 'hook',
-              result: { description: 'You have to do dishes' },
+              result: {description: 'You have to do dishes'},
               addedProperty: true
             });
           });
@@ -160,13 +160,13 @@ describe('@feathersjs/express/rest provider', () => {
 
       it('can use hook.dispatch', () => {
         app.use('/hook-dispatch', {
-          get (id) {
+          get(id) {
             return Promise.resolve({});
           }
         });
 
         app.service('hook-dispatch').hooks({
-          after (hook) {
+          after(hook) {
             hook.dispatch = {
               id: hook.id,
               fromDispatch: true
@@ -185,13 +185,13 @@ describe('@feathersjs/express/rest provider', () => {
 
       it('allows to set statusCode in a hook', () => {
         app.use('/hook-status', {
-          get (id) {
+          get(id) {
             return Promise.resolve({});
           }
         });
 
         app.service('hook-status').hooks({
-          after (hook) {
+          after(hook) {
             hook.statusCode = 206;
           }
         });
@@ -202,7 +202,7 @@ describe('@feathersjs/express/rest provider', () => {
 
       it('sets the hook object in res.hook on error', () => {
         app.use('/hook-error', {
-          get () {
+          get() {
             return Promise.reject(new Error('I blew up'));
           }
         }, function (error, req, res, next) {
@@ -231,7 +231,7 @@ describe('@feathersjs/express/rest provider', () => {
                 result: null,
                 error: {}
               },
-              error: { message: 'I blew up' }
+              error: {message: 'I blew up'}
             });
           });
       });
@@ -241,7 +241,7 @@ describe('@feathersjs/express/rest provider', () => {
   describe('middleware', () => {
     it('sets service parameters and provider type', () => {
       let service = {
-        get (id, params) {
+        get(id, params) {
           return Promise.resolve(params);
         }
       };
@@ -281,14 +281,14 @@ describe('@feathersjs/express/rest provider', () => {
       };
       const app = expressify(feathers());
 
-      app.use(function defaultContentTypeMiddleware (req, res, next) {
+      app.use(function defaultContentTypeMiddleware(req, res, next) {
         req.headers['content-type'] = req.headers['content-type'] || 'application/json';
         next();
       })
         .configure(rest(rest.formatter))
         .use(bodyParser.json())
         .use('/todo', {
-          create (data) {
+          create(data) {
             return Promise.resolve(data);
           }
         });
@@ -316,17 +316,17 @@ describe('@feathersjs/express/rest provider', () => {
       app.configure(rest())
         .use(bodyParser.json())
         .use('/todo', function (req, res, next) {
-          req.body.before = [ 'before first' ];
+          req.body.before = ['before first'];
           next();
         }, function (req, res, next) {
           req.body.before.push('before second');
           next();
         }, {
-          create (data) {
+          create(data) {
             return Promise.resolve(data);
           }
         }, function (req, res, next) {
-          res.data.after = [ 'after first' ];
+          res.data.after = ['after first'];
           next();
         }, function (req, res, next) {
           res.data.after.push('after second');
@@ -335,19 +335,44 @@ describe('@feathersjs/express/rest provider', () => {
 
       const server = app.listen(4776);
 
-      return axios.post('http://localhost:4776/todo', { text: 'Do dishes' })
+      return axios.post('http://localhost:4776/todo', {text: 'Do dishes'})
         .then(res => {
           assert.deepEqual(res.data, {
             text: 'Do dishes',
-            before: [ 'before first', 'before second' ],
-            after: [ 'after first', 'after second' ]
+            before: ['before first', 'before second'],
+            after: ['after first', 'after second']
           });
         })
         .then(() => server.close());
     });
 
+    it('allows an array of middleware without a service', () => {
+      const app = expressify(feathers());
+
+      app.configure(rest())
+        .use(bodyParser.json())
+        .use('/array-middleware', function (req, res, next) {
+          res.data = ['first'];
+          next();
+        }, function (req, res, next) {
+          res.data.push('second');
+          next();
+        }, function (req, res, next) {
+          res.data.push(req.body.text);
+          res.status(200).json(res.data);
+        });
+
+      const server = app.listen(4776);
+
+      return axios.post('http://localhost:4776/array-middleware', {text: 'Do dishes'})
+        .then(res => {
+          assert.deepEqual(res.data, ['first', 'second', 'Do dishes']);
+        })
+        .then(() => server.close());
+    });
+
     it('formatter does nothing when there is no res.data', () => {
-      const data = { message: 'It worked' };
+      const data = {message: 'It worked'};
       const app = expressify(feathers()).use('/test',
         rest.formatter,
         (req, res) => res.json(data)
@@ -368,17 +393,17 @@ describe('@feathersjs/express/rest provider', () => {
       app = expressify(feathers())
         .configure(rest(rest.formatter))
         .use('todo', {
-          get (id) {
+          get(id) {
             return Promise.resolve({
               description: `You have to do ${id}`
             });
           },
 
-          patch () {
+          patch() {
             return Promise.reject(new Error('Not implemented'));
           },
 
-          find () {
+          find() {
             return Promise.resolve(null);
           }
         });
@@ -397,7 +422,7 @@ describe('@feathersjs/express/rest provider', () => {
           res.status(500);
         }
 
-        res.json({ message: error.message });
+        res.json({message: error.message});
       });
 
       server = app.listen(4780);
@@ -446,7 +471,7 @@ describe('@feathersjs/express/rest provider', () => {
       app = expressify(feathers())
         .configure(rest())
         .use('/:appId/:id/todo', {
-          get (id, params) {
+          get(id, params) {
             return Promise.resolve({
               id,
               route: params.route
