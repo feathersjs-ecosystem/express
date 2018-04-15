@@ -419,7 +419,7 @@ describe('@feathersjs/express/rest provider', () => {
           assert.equal(error.response.headers.allow, 'GET,PATCH');
           assert.ok(error.response.status === 405, 'Got 405 for .create');
           assert.deepEqual(error.response.data, {
-            message: 'Method `create` is not supported by this endpoint.'
+            message: 'Method `create` is not supported by \'/todo\''
           }, 'Error serialized as expected');
         });
     });
