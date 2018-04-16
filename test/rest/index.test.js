@@ -348,10 +348,8 @@ describe('@feathersjs/express/rest provider', () => {
 
     it('allows an array of middleware without a service', () => {
       const app = expressify(feathers());
-
-      app.configure(rest())
-        .use(bodyParser.json())
-        .use('/array-middleware', function (req, res, next) {
+      const middlewareArray = [
+        function (req, res, next) {
           res.data = ['first'];
           next();
         }, function (req, res, next) {
@@ -360,7 +358,10 @@ describe('@feathersjs/express/rest provider', () => {
         }, function (req, res, next) {
           res.data.push(req.body.text);
           res.status(200).json(res.data);
-        });
+        }];
+      app.configure(rest())
+        .use(bodyParser.json())
+        .use('/array-middleware', middlewareArray);
 
       const server = app.listen(4776);
 
