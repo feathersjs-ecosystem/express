@@ -1,13 +1,10 @@
 # @feathersjs/express
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/feathersjs/express.svg)](https://greenkeeper.io/)
+> __Important:__ The code for this module has been moved into the main Feathers repository at [feathersjs/feathers](https://github.com/feathersjs/feathers) ([package direct link](https://github.com/feathersjs/feathers/tree/master/packages/express)). Please open issues and pull requests there.
 
 [![Build Status](https://travis-ci.org/feathersjs/express.png?branch=master)](https://travis-ci.org/feathersjs/express)
-[![Test Coverage](https://codeclimate.com/github/feathersjs/express/badges/coverage.svg)](https://codeclimate.com/github/feathersjs/express/coverage)
-[![Dependency Status](https://img.shields.io/david/feathersjs/express.svg?style=flat-square)](https://david-dm.org/feathersjs/express)
-[![Download Status](https://img.shields.io/npm/dm/@feathersjs/express.svg?style=flat-square)](https://www.npmjs.com/package/@feathersjs/express)
 
-> Feathers Express framework bindings and REST provider
+Feathers Express framework bindings and REST provider
 
 This plugin turns a Feathers v3+ application into a drop-in replacement for any Express application.
 
